@@ -1,0 +1,188 @@
+<html>
+
+<head>
+    <script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+    integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+    integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+    crossorigin=""></script>
+
+    <link rel="stylesheet" href="leaflet-timeline-slider.css"/>
+    <script src="leaflet-timeline-slider.js"></script>
+    
+</head>
+    <body>
+        <div id="mapid" style="height: 600px;">
+        </div>
+
+
+        <script type="text/javascript">
+            data = {"type": "FeatureCollection",
+                        "features": [
+                            {
+                                "type": "Feature",
+                                "properties": {
+                                    "title": "Day 1"
+                                },
+                                "geometry": {
+                                    "type": "Point",
+                                    "coordinates": [
+                                        7.582512743,
+                                        51.933292258,
+                                        1
+                                    ]
+                                }
+                            },
+                            {
+                                "type": "Feature",
+                                "properties": {
+                                    "title": "The Next Day"
+                                },
+                                "geometry": {
+                                    "type": "Point",
+                                    "coordinates": [
+                                        7.602516645,
+                                        51.94962073,
+                                        1
+                                    ]
+                                }
+                            },
+                            {
+                                "type": "Feature",
+                                "properties": {
+                                    "title": "This is a really long label for some event name"
+                                },
+                                "geometry": {
+                                    "type": "Point",
+                                    "coordinates": [
+                                        7.61132039,
+                                        51.967614681,
+                                        1
+                                    ]
+                                }
+                            },
+                            {
+                                "type": "Feature",
+                                "properties": {
+                                    "title": "Amazing Event"
+                                },
+                                "geometry": {
+                                    "type": "Point",
+                                    "coordinates": [
+                                        7.595284208,
+                                        51.976391375,
+                                        1
+                                    ]
+                                }
+                            },
+                            {
+                                "type": "Feature",
+                                "properties": {
+                                    "title": "1776"
+                                },
+                                "geometry": {
+                                    "type": "Point",
+                                    "coordinates": [
+                                        7.632516645,
+                                        51.94962073,
+                                        1
+                                    ]
+                                }
+                            },
+                            {
+                                "type": "Feature",
+                                "properties": {
+                                    "title": "1984"
+                                },
+                                "geometry": {
+                                    "type": "Point",
+                                    "coordinates": [
+                                        7.602516645,
+                                        51.99962073,
+                                        1
+                                    ]
+                                }
+                            },
+                            {
+                                "type": "Feature",
+                                "properties": {
+                                    "title": "12/22/63"
+                                },
+                                "geometry": {
+                                    "type": "Point",
+                                    "coordinates": [
+                                        7.902516645,
+                                        51.94962073,
+                                        1
+                                    ]
+                                }
+                            },
+                            {
+                                "type": "Feature",
+                                "properties": {
+                                    "title": "12/22/63"
+                                },
+                                "geometry": {
+                                    "type": "Point",
+                                    "coordinates": [
+                                        7.912516645,
+                                        51.95962073,
+                                        1
+                                    ]
+                                }
+                            },
+                        ]
+                    }
+
+            
+            var mymap = L.map('mapid')
+            
+            getDataAddMarkers = function(label, value, map) {
+                map.eachLayer(function (layer) {
+                        map.removeLayer(layer);
+                });
+
+                
+
+                filteredData = data.features.filter(function (i, n) {
+                    return i.properties.title===label;
+                    });
+
+                
+                map.setView([filteredData[0].geometry.coordinates[1], filteredData[0].geometry.coordinates[0]], 13);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+                
+                
+                L.geoJson(filteredData, {
+                    onEachFeature: function onEachFeature(feature, layer) {
+                        content = "I did " + value + " pushups on this day."
+                        var popup = L.popup().setContent(content);
+                        layer.bindPopup(popup);
+                    }
+                }).addTo(map);
+            }
+
+            L.control.timelineSlider({ 
+                labelFontSize: "14px",
+                inactiveColor: "#696969",
+                backgroundOpacity: 0.75,
+                thumbRadius: "4.5px",
+                labelWidth: "80px",
+                timelineItems: ["Day 1", "The Next Day", "This is a really long label for some event name", "Amazing Event", "1776", "1984", "12/22/63"],
+                valChoice: "both", 
+                changeMap: getDataAddMarkers })
+            .addTo(mymap);        
+            
+        </script>
+    </body>
+
+</html>
