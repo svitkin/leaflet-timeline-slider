@@ -7,11 +7,11 @@ L.Control.TimeLineSlider = L.Control.extend({
 
         valChoice: 'label',
         changeMap: function(val, map) {
-            console.log("You are not using the " + val + " from the timeline to change the map.");
+            console.log("You are not using the value or label from the timeline to change the map.");
         },
         initializeChange: true,
         
-        thumbRadius: "4.5px",
+        thumbHeight: "4.5px",
         labelWidth: "90.25px",
         labelFontSize: "14px",
         activeColor: "#37adbf",
@@ -27,18 +27,23 @@ L.Control.TimeLineSlider = L.Control.extend({
     },
 
     // TODO: Initialize checking of function changeMap and valChoice
-    //initialize: function (f, options) {
-    //    console.log(this.options.changeMap);
-    //    console.log(typeof(this.options.changeMap));
-    //    if (typeof this.options.changeMap != "function") {
-    //        this.options.changeMap = function (val, map) {
-    //            return val;
-    //        };
-    //    }
-    //    if (this.options.valChoice != 'label' | this.options.valChoice != 'value') {
-    //        this.options.valChoice = 'label';
-    //    }
-    //},
+    initialize: function (options) {
+        if (typeof options.changeMap != "function") {
+            options.changeMap = function (val, map) {
+                console.log("You are not using the value or label from the timeline to change the map.");
+            };
+        }
+        
+        if (options.valChoice != 'label' & options.valChoice != 'value' & options.valChoice != 'both') {
+            options.valChoice = 'label';
+        }
+        
+        if (parseFloat(options.thumbHeight) <= 2) {
+            console.log("The nodes on the timeline will not appear properly if its radius is less than 2px.")
+        }
+
+        L.setOptions(this, options);
+    },
     onAdd: function(map) {
         this.map = map;
         this.sheet = document.createElement('style');
@@ -71,7 +76,7 @@ L.Control.TimeLineSlider = L.Control.extend({
         this.rangeLabelArray = Array.from(this.rangeLabels.getElementsByTagName('li'));
         this.sliderLength = this.rangeLabelArray.length;
 
-        this.thumbSize = parseFloat(this.options.thumbRadius) * 2;
+        this.thumbSize = parseFloat(this.options.thumbHeight) * 2;
         // double the thumb size when its active
         this.activeThumbSize = this.thumbSize * 2;
   
@@ -79,10 +84,10 @@ L.Control.TimeLineSlider = L.Control.extend({
         this.rangeWidthCSS = parseFloat(this.options.labelWidth) * (this.options.timelineItems.length-1) + (this.thumbSize*2);
         
         // move labels over to the left so they line up; move half the width of the label and adjust for thumb radius
-        this.rlLabelMargin = parseFloat(this.options.labelWidth)/2 - (parseFloat(this.options.thumbRadius)/2);
+        this.rlLabelMargin = parseFloat(this.options.labelWidth)/2 - (parseFloat(this.options.thumbHeight)/2);
         
         // 25 because that is the top offset on the li; 2.5 because that is half the height of the range input
-        this.topLabelMargin = 25 - parseFloat(that.options.thumbRadius) - 2.5
+        this.topLabelMargin = 25 - parseFloat(this.options.thumbHeight) - 2.5;
         
         this.backgroundRGBA = this.hexToRGBA(this.options.backgroundColor, this.options.backgroundOpacity);
         this.coverBackgroundRGBA = this.hexToRGBA(this.options.backgroundColor, 0);
@@ -103,6 +108,7 @@ L.Control.TimeLineSlider = L.Control.extend({
             // console.log("Current label passed in is " + curLabel);
             
             // Change map according to either current label or value chosen
+            console.log(that.options.valChoice);
             if (that.options.valChoice === 'label') {
                 changeVal = curLabel;
                 that.options.changeMap(changeVal, that.map);
