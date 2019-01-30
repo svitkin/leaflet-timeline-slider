@@ -59,6 +59,8 @@ L.Control.TimeLineSlider = L.Control.extend({
         /* Prevent scroll events propagation to map when cursor on the div */
         L.DomEvent.disableScrollPropagation(this.container);
 
+
+
         /* Create html elements for input and labels */
         this.slider = L.DomUtil.create('div', 'range', this.container);
         this.slider.innerHTML = `<input id="rangeinputslide" type="range" min="1" max="${this.options.timelineItems.length}" steps="1" value="1"></input>`
@@ -74,85 +76,14 @@ L.Control.TimeLineSlider = L.Control.extend({
         this.activeThumbSize = this.thumbSize * 2;
 
         this.rangeWidthCSS = parseFloat(this.options.labelWidth) * (this.options.timelineItems.length-1) + (this.thumbSize*2);
-        this.rlLabelMargin = parseFloat(this.options.labelWidth)/2 - 2;
+        this.rlLabelMargin = parseFloat(this.options.labelWidth)/2 - (parseFloat(this.options.thumbRadius)/2);
         
-        this.backgroundRGBA = this.hexToRGBA(this.options.backgroundColor, this.options.backgroundOpacity)
-        console.log("The width of the range is " + this.rangeWidthCSS);
+        this.backgroundRGBA = this.hexToRGBA(this.options.backgroundColor, this.options.backgroundOpacity);
+        this.coverBackgroundRGBA = this.hexToRGBA(this.options.backgroundColor, 0);
         
-        this.sheet.textContent = `
-            .control_container { 
-                background-color: ${this.backgroundRGBA};
-                padding: 15px ${this.options.rightBgPadding} 15px ${this.options.leftBgMPadding};
-                margin: 15px ${this.optionsleftBgMargin} 15px ${this.options.rightBgMargin};
-            }
-
-            .range {
-                left: -${this.thumbSize}px;
-                opacity: ${this.backgroundOpacity};
-                width: ${this.rangeWidthCSS}px;
-            }
-            .range input {
-                opacity: ${this.backgroundOpacity};
-            }
-
-            .range input::-webkit-slider-thumb {
-                width: ${this.activeThumbSize}px;
-                height: ${this.activeThumbSize}px;    
-            }
-            .range input::-moz-range-thumb {
-                width: ${this.activeThumbSize}px;
-                height: ${this.activeThumbSize}px;
-                
-            }
-            .range input::-ms-thumb {
-                width: ${this.activeThumbSize}px;
-                height: ${this.activeThumbSize}px;
-            }
-
-
-            .range input::-webkit-slider-runnable-track {
-                background: red;
-            }
-            .range input::-moz-range-track {
-                background: ${this.options.inactiveColor};
-            }
-            .range input::-ms-track {
-                background: ${this.options.inactiveColor};
-            }
-
-            .range-labels {
-                margin: 18px -${this.rlLabelMargin}px 0;
-            }
-
-            .range-labels li {
-                color: ${this.options.inactiveColor};
-                width: ${this.options.labelWidth};
-                font-size: ${this.options.labelFontSize};
-            }
-            .range-labels li::before {
-                background: ${this.options.inactiveColor};
-                width: ${this.thumbSize}px;
-                height: ${this.thumbSize}px;
-            }
-            
-            .range input::-webkit-slider-thumb {
-                background: ${this.options.activeColor};
-            }
-            .range input::-moz-range-thumb {
-                background: ${this.options.activeColor};
-            }
-            .range input::-ms-thumb {
-                background: ${this.options.activeColor};
-            }
-            .range-labels .active {
-                color: ${this.options.activeColor};
-            }
-            .range-labels .selected::before {
-                background: ${this.options.activeColor};
-            }`
-
-
         that = this;
+        
+        this.sheet.textContent = this.setupStartStyles();
 
         /* When input gets changed change styles on slider and trigger user's changeMap function */
         L.DomEvent.on(this.rangeInput, "input", function() {
@@ -215,6 +146,129 @@ L.Control.TimeLineSlider = L.Control.extend({
         throw new Error('Bad Hex');
     },
 
+    setupStartStyles: function() {
+        style = `
+            .control_container { 
+                background-color: ${that.backgroundRGBA};
+                padding: 15px ${that.options.rightBgPadding} 15px ${that.options.leftBgMPadding};
+                margin: 15px ${that.optionsleftBgMargin} 15px ${that.options.rightBgMargin};
+            }
+
+            .range {
+                position: relative;
+                left: -${that.thumbSize}px;
+                height: 5px;
+                width: ${that.rangeWidthCSS}px;
+            }
+
+            .range input {
+                width: 100%;
+                position: absolute;
+                height: 0;
+                -webkit-appearance: none;
+            }
+
+            /* -1 because the height is 2 (half the height) */
+            .range input::-webkit-slider-thumb {
+                background: ${that.options.activeColor};
+                margin: -${that.thumbSize - 1}px 0 0;
+                width: ${that.activeThumbSize}px;
+                height: ${that.activeThumbSize}px;    
+                -webkit-appearance: none;
+                border-radius: 50%;
+                cursor: pointer;
+                border: 0 !important;
+            }
+            .range input::-moz-range-thumb {
+                background: ${that.options.activeColor};
+                margin: -${that.thumbSize - 1}px 0 0;
+                width: ${that.activeThumbSize}px;
+                height: ${that.activeThumbSize}px;
+                border-radius: 50%;
+                cursor: pointer;
+                border: 0 !important;
+            }
+            .range input::-ms-thumb {
+                background: ${that.options.activeColor};
+                margin: -${that.thumbSize - 1}px 0 0;
+                width: ${that.activeThumbSize}px;
+                height: ${that.activeThumbSize}px;
+                border-radius: 50%;
+                cursor: pointer;
+                border: 0 !important;
+            }
+
+
+            .range input::-webkit-slider-runnable-track {
+                background: ${that.options.backgroundColor};
+                width: 100%;
+                height: 2px;
+                cursor: pointer;
+            }
+            .range input::-moz-range-track {
+                background: ${that.options.backgroundColor};
+                width: 100%;
+                height: 2px;
+                cursor: pointer;
+            }
+            .range input::-ms-track {
+                background: ${that.options.backgroundColor};
+                width: 100%;
+                height: 2px;
+                cursor: pointer;
+                background: transparent;
+                border-color: transparent;
+                color: transparent;
+            }
+
+            .range input:focus {
+                background: none;
+                outline: none;
+            }
+
+            .range-labels {
+                margin: ${25 - parseFloat(that.options.thumbRadius) - parseFloat(that.options.thumbRadius)/2}px -${that.rlLabelMargin}px 0;
+                padding: 0;
+                list-style: none;
+            }
+
+            .range-labels li {
+                color: ${that.options.inactiveColor};
+                width: ${that.options.labelWidth};
+                font-size: ${that.options.labelFontSize};
+                position: relative;
+                float: left;
+                text-align: center;
+                cursor: pointer;
+            }
+            .range-labels li::before {
+                background: ${that.options.inactiveColor};
+                width: ${that.thumbSize}px;
+                height: ${that.thumbSize}px;
+                position: absolute;
+                top: -25px;
+                right: 0;
+                left: 0;
+                content: "";
+                margin: 0 auto;
+                border-radius: 50%;
+            }
+            .range-labels .active {
+                color: ${that.options.activeColor};
+            }
+            .range-labels .selected::before {
+                background: ${that.options.activeColor};
+            }
+            .range-labels .active.selected::before {
+                display: none;
+            }
+            `;
+            
+
+            return style;
+
+    },
+
     getTrackStyle: function (el, sliderLength) {  
         prefs = ['webkit-slider-runnable-track', 'moz-range-track', 'ms-track'];
 
@@ -244,13 +298,13 @@ L.Control.TimeLineSlider = L.Control.extend({
 
         // Change background gradient
         for (var i = 0; i < prefs.length; i++) {
-          style += `.range {background: linear-gradient(to right, ${that.options.backgroundColor} 0%, ${that.options.backgroundColor} ${coverVal}%, ${that.options.activeColor} ${coverVal}%, ${that.options.activeColor} ${val}%,  ${that.options.backgroundColor} 0%, ${that.options.backgroundColor} 100%)}`;
-          style += '.range input::-' + prefs[i] + `{background: linear-gradient(to right, ${that.options.backgroundColor} 0%, ${that.options.backgroundColor} ${coverVal}%, ${that.options.activeColor} 0%, ${that.options.activeColor} ${val}%, ${that.options.inactiveColor} ${val}%, ${that.options.inactiveColor} ${100-coverVal}%, ${that.options.backgroundColor} ${100-coverVal}%, ${that.options.backgroundColor} 100%)}`;
+          style += `.range {background: linear-gradient(to right, ${that.coverBackgroundRGBA} 0%, ${that.coverBackgroundRGBA} ${coverVal}%, ${that.options.activeColor} ${coverVal}%, ${that.options.activeColor} ${val}%,  ${that.coverBackgroundRGBA} 0%, ${that.coverBackgroundRGBA} 100%)}`;
+          style += '.range input::-' + prefs[i] + `{background: linear-gradient(to right, ${that.coverBackgroundRGBA} 0%, ${that.coverBackgroundRGBA} ${coverVal}%, ${that.options.activeColor} 0%, ${that.options.activeColor} ${val}%, ${that.options.inactiveColor} ${val}%, ${that.options.inactiveColor} ${100-coverVal}%, ${that.coverBackgroundRGBA} ${100-coverVal}%, ${that.coverBackgroundRGBA} 100%)}`;
         }
 
         //console.log(style);
         return style;
-      }
+    }
       
 })
 
