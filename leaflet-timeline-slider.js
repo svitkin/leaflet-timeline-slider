@@ -39,7 +39,6 @@ L.Control.TimeLineSlider = L.Control.extend({
     //        this.options.valChoice = 'label';
     //    }
     //},
-
     onAdd: function(map) {
         this.map = map;
         this.sheet = document.createElement('style');
@@ -73,10 +72,17 @@ L.Control.TimeLineSlider = L.Control.extend({
         this.sliderLength = this.rangeLabelArray.length;
 
         this.thumbSize = parseFloat(this.options.thumbRadius) * 2;
+        // double the thumb size when its active
         this.activeThumbSize = this.thumbSize * 2;
-
+  
+        // make the width of the range div holding the input the number of intervals * the label width and add the thumb size on either end of the range
         this.rangeWidthCSS = parseFloat(this.options.labelWidth) * (this.options.timelineItems.length-1) + (this.thumbSize*2);
+        
+        // move labels over to the left so they line up; move half the width of the label and adjust for thumb radius
         this.rlLabelMargin = parseFloat(this.options.labelWidth)/2 - (parseFloat(this.options.thumbRadius)/2);
+        
+        // 25 because that is the top offset on the li; 2.5 because that is half the height of the range input
+        this.topLabelMargin = 25 - parseFloat(that.options.thumbRadius) - 2.5
         
         this.backgroundRGBA = this.hexToRGBA(this.options.backgroundColor, this.options.backgroundOpacity);
         this.coverBackgroundRGBA = this.hexToRGBA(this.options.backgroundColor, 0);
@@ -226,8 +232,9 @@ L.Control.TimeLineSlider = L.Control.extend({
                 outline: none;
             }
 
+
             .range-labels {
-                margin: ${25 - parseFloat(that.options.thumbRadius) - parseFloat(that.options.thumbRadius)/2}px -${that.rlLabelMargin}px 0;
+                margin: ${that.topLabelMargin}px -${that.rlLabelMargin}px 0;
                 padding: 0;
                 list-style: none;
             }
