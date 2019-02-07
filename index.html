@@ -27,13 +27,14 @@
                             {
                                 "type": "Feature",
                                 "properties": {
-                                    "title": "Day 1"
+                                    "title": "Day 1",
+                                    "content": "This is where some people moved to."
                                 },
                                 "geometry": {
                                     "type": "Point",
                                     "coordinates": [
-                                        7.582512743,
-                                        51.933292258,
+                                        -73.7949,
+                                        40.7282,
                                         1
                                     ]
                                 }
@@ -41,13 +42,14 @@
                             {
                                 "type": "Feature",
                                 "properties": {
-                                    "title": "The Next Day"
+                                    "title": "The Next Day",
+                                    "content": "This is where some people grooved to."
                                 },
                                 "geometry": {
                                     "type": "Point",
                                     "coordinates": [
-                                        7.602516645,
-                                        51.94962073,
+                                        -74.3838,
+                                        40.9148,
                                         1
                                     ]
                                 }
@@ -55,13 +57,14 @@
                             {
                                 "type": "Feature",
                                 "properties": {
-                                    "title": "This is a really long label for some event name"
+                                    "title": "Amazing Event",
+                                    "content": "This is where they went to have fun."
                                 },
                                 "geometry": {
                                     "type": "Point",
                                     "coordinates": [
-                                        7.61132039,
-                                        51.967614681,
+                                        4.899431,
+                                        52.379189,
                                         1
                                     ]
                                 }
@@ -69,13 +72,14 @@
                             {
                                 "type": "Feature",
                                 "properties": {
-                                    "title": "Amazing Event"
+                                    "title": "1776",
+                                    "content": "This where they went when the revolution had begun."
                                 },
                                 "geometry": {
                                     "type": "Point",
                                     "coordinates": [
-                                        7.595284208,
-                                        51.976391375,
+                                        -71.3489484,
+                                        42.4603719,
                                         1
                                     ]
                                 }
@@ -83,13 +87,15 @@
                             {
                                 "type": "Feature",
                                 "properties": {
-                                    "title": "1776"
+                                    "title": "1776",
+                                    "content": "This where they went when the revolution had begun."
+                                    
                                 },
                                 "geometry": {
                                     "type": "Point",
                                     "coordinates": [
-                                        7.632516645,
-                                        51.94962073,
+                                        -71.2272,
+                                        42.4473,
                                         1
                                     ]
                                 }
@@ -97,13 +103,14 @@
                             {
                                 "type": "Feature",
                                 "properties": {
-                                    "title": "1984"
+                                    "title": "1984",
+                                    "content": "So they all came here...and disappeared without a trace!"
                                 },
                                 "geometry": {
                                     "type": "Point",
                                     "coordinates": [
-                                        7.602516645,
-                                        51.99962073,
+                                        -0.118092,
+                                        51.509865,
                                         1
                                     ]
                                 }
@@ -111,27 +118,14 @@
                             {
                                 "type": "Feature",
                                 "properties": {
-                                    "title": "12/22/63"
+                                    "title": "12/22/63",
+                                    "content": "Now, this can be quite the scary place."
                                 },
                                 "geometry": {
                                     "type": "Point",
                                     "coordinates": [
-                                        7.902516645,
-                                        51.94962073,
-                                        1
-                                    ]
-                                }
-                            },
-                            {
-                                "type": "Feature",
-                                "properties": {
-                                    "title": "12/22/63"
-                                },
-                                "geometry": {
-                                    "type": "Point",
-                                    "coordinates": [
-                                        7.912516645,
-                                        51.95962073,
+                                        -70.2553259,
+                                        43.661471,
                                         1
                                     ]
                                 }
@@ -142,44 +136,41 @@
             
             var mymap = L.map('mapid')
             
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(mymap);
+            
             getDataAddMarkers = function(label, value, map) {
                 map.eachLayer(function (layer) {
-                        map.removeLayer(layer);
+                        if (layer instanceof L.Marker) {
+                            map.removeLayer(layer);
+                        }
                 });
-
-                
 
                 filteredData = data.features.filter(function (i, n) {
                     return i.properties.title===label;
                     });
 
-                
-                map.setView([filteredData[0].geometry.coordinates[1], filteredData[0].geometry.coordinates[0]], 13);
-
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                }).addTo(map);
-                
-                
+                var markerArray = []
                 L.geoJson(filteredData, {
                     onEachFeature: function onEachFeature(feature, layer) {
-                        content = "I did " + value + " pushups on this day."
+                        content = `${feature.properties.content} <br> (${Math.round(value/6 * 100)}% done with story)`
                         var popup = L.popup().setContent(content);
                         layer.bindPopup(popup);
+                        markerArray.push(layer);
                     }
                 }).addTo(map);
+                
+                var markerGroup = L.featureGroup(markerArray);
+                map.fitBounds(markerGroup.getBounds()).setZoom(12);
+                //markerGroup.addTo(map);
             }
 
-            L.control.timelineSlider({ 
-                labelFontSize: "14px",
-                backgroundOpacity: .75,
-                thumbHeight: "4.5px",
-                labelWidth: "80px",
-                timelineItems: ["Day 1", "The Next Day", "This is a really long label for some event name", "Amazing Event", "1776", "1984", "12/22/63"],
+            L.control.timelineSlider({
+                timelineItems: ["Day 1", "The Next Day", "Amazing Event", "1776", "12/22/63", "1984"],
                 valChoice: "both", 
                 changeMap: getDataAddMarkers })
-            .addTo(mymap);        
-            
+            .addTo(mymap);             
         </script>
     </body>
 

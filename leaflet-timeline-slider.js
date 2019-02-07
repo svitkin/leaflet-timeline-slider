@@ -2,7 +2,7 @@
 L.Control.TimeLineSlider = L.Control.extend({
 
     options: {
-        position: 'topright',
+        position: 'bottomright',
         timelineItems: ["Today", "Tomorrow", "The Next Day"],
 
         valChoice: 'label',
@@ -12,15 +12,18 @@ L.Control.TimeLineSlider = L.Control.extend({
         initializeChange: true,
         
         thumbHeight: "4.5px",
-        labelWidth: "90.25px",
+        labelWidth: "80px",
+        betweenLabelAndRangeSpace: "20px",
+
         labelFontSize: "14px",
         activeColor: "#37adbf",
-        inactiveColor: "#b2b2b2",
+        inactiveColor: "#8e8e8e",
         
-        backgroundOpacity: 0.95,
+        backgroundOpacity: 0.75,
         backgroundColor: "#ffffff",
-        rightBgMargin: "30px",
-        leftBgMargin: "30px",
+
+        topBgPadding: "10px",
+        bottomBgPadding: "0px",
         rightBgPadding: "30px",
         leftBgMPadding: "30px",
 
@@ -63,8 +66,6 @@ L.Control.TimeLineSlider = L.Control.extend({
         /* Prevent scroll events propagation to map when cursor on the div */
         L.DomEvent.disableScrollPropagation(this.container);
 
-
-
         /* Create html elements for input and labels */
         this.slider = L.DomUtil.create('div', 'range', this.container);
         this.slider.innerHTML = `<input id="rangeinputslide" type="range" min="1" max="${this.options.timelineItems.length}" steps="1" value="1"></input>`
@@ -86,14 +87,14 @@ L.Control.TimeLineSlider = L.Control.extend({
         // move labels over to the left so they line up; move half the width of the label and adjust for thumb radius
         this.rlLabelMargin = parseFloat(this.options.labelWidth)/2 - (parseFloat(this.options.thumbHeight)/2);
         
-        // 25 because that is the top offset on the li; 2.5 because that is half the height of the range input
-        this.topLabelMargin = 25 - parseFloat(this.options.thumbHeight) - 2.5;
+        // 2.5 because that is half the height of the range input
+        this.topLabelMargin = parseFloat(this.options.betweenLabelAndRangeSpace) - parseFloat(this.options.thumbHeight) - 2.5;
         
         this.backgroundRGBA = this.hexToRGBA(this.options.backgroundColor, this.options.backgroundOpacity);
         this.coverBackgroundRGBA = this.hexToRGBA(this.options.backgroundColor, 0);
         
         that = this;
-        
+
         this.sheet.textContent = this.setupStartStyles();
 
         /* When input gets changed change styles on slider and trigger user's changeMap function */
@@ -108,7 +109,6 @@ L.Control.TimeLineSlider = L.Control.extend({
             // console.log("Current label passed in is " + curLabel);
             
             // Change map according to either current label or value chosen
-            console.log(that.options.valChoice);
             if (that.options.valChoice === 'label') {
                 changeVal = curLabel;
                 that.options.changeMap(changeVal, that.map);
@@ -144,6 +144,11 @@ L.Control.TimeLineSlider = L.Control.extend({
         return this.container;
 
     },
+
+    onRemove: function() {
+        // remove control html element
+        L.DomUtil.remove(this.container);
+    },
     
     hexToRGBA: function(hex, opacity){
         var c;
@@ -162,8 +167,7 @@ L.Control.TimeLineSlider = L.Control.extend({
         style = `
             .control_container { 
                 background-color: ${that.backgroundRGBA};
-                padding: 15px ${that.options.rightBgPadding} 15px ${that.options.leftBgMPadding};
-                margin: 15px ${that.optionsleftBgMargin} 15px ${that.options.rightBgMargin};
+                padding: ${that.options.topBgPadding} ${that.options.rightBgPadding} ${that.options.bottomBgPadding} ${that.options.leftBgMPadding};
             }
 
             .range {
@@ -259,7 +263,7 @@ L.Control.TimeLineSlider = L.Control.extend({
                 width: ${that.thumbSize}px;
                 height: ${that.thumbSize}px;
                 position: absolute;
-                top: -25px;
+                top: -${that.options.betweenLabelAndRangeSpace};
                 right: 0;
                 left: 0;
                 content: "";
@@ -291,8 +295,6 @@ L.Control.TimeLineSlider = L.Control.extend({
             coverVal = (parseFloat(that.thumbSize)/that.rangeWidthCSS) * 100;
             style = '';
 
-        console.log(coverVal + "% is getting covered up");
-        
         // Remove active and selected classes from all labels
         for (li of that.rangeLabelArray) {
             L.DomUtil.removeClass(li, 'active');

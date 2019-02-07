@@ -1,3 +1,8 @@
 # TODOs...
-- make better example data (lats and lons)
-- create multiple example formats or button that lets you switch between some formatting examples in index.html
+- Fix example timing of marker adding error
+- Fix weird mozilla squigly on input line
+- Make sure onRemove is working correctly
+- Make another example with more customizable options set
+- Make readme according to leaflet plugin guide
+- Organize code according to leaflet plugin guide
+- Remove debugging console.logs
