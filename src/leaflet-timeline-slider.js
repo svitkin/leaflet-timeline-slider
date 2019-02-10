@@ -25,7 +25,7 @@ L.Control.TimeLineSlider = L.Control.extend({
         topBgPadding: "10px",
         bottomBgPadding: "0px",
         rightBgPadding: "30px",
-        leftBgMPadding: "30px",
+        leftBgPadding: "30px",
 
     },
 
@@ -167,7 +167,7 @@ L.Control.TimeLineSlider = L.Control.extend({
         style = `
             .control_container { 
                 background-color: ${that.backgroundRGBA};
-                padding: ${that.options.topBgPadding} ${that.options.rightBgPadding} ${that.options.bottomBgPadding} ${that.options.leftBgMPadding};
+                padding: ${that.options.topBgPadding} ${that.options.rightBgPadding} ${that.options.bottomBgPadding} ${that.options.leftBgPadding};
             }
 
             .range {
@@ -242,6 +242,9 @@ L.Control.TimeLineSlider = L.Control.extend({
                 outline: none;
             }
 
+            . range input[type=range]::-moz-focus-outer {
+                border: 0;
+            }
 
             .range-labels {
                 margin: ${that.topLabelMargin}px -${that.rlLabelMargin}px 0;

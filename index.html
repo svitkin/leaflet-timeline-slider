@@ -1,6 +1,8 @@
-<html>
+<html lang = "en">
 
 <head>
+    <meta charset = "UTF-8" />
+    <title>Leaflet Timeline Slider</title>
     <script
     src="https://code.jquery.com/jquery-3.3.1.min.js"
     integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
@@ -13,7 +15,7 @@
     integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
     crossorigin=""></script>
 
-    <script src="leaflet-timeline-slider.js"></script>
+    <script src="dist/leaflet-timeline-slider.min.js"></script>
     
 </head>
     <body>
@@ -164,7 +166,7 @@
                 var markerGroup = L.featureGroup(markerArray);
                 map.fitBounds(markerGroup.getBounds()).setZoom(12);
                 //markerGroup.addTo(map);
-            }
+            };
 
             L.control.timelineSlider({
                 timelineItems: ["Day 1", "The Next Day", "Amazing Event", "1776", "12/22/63", "1984"],
