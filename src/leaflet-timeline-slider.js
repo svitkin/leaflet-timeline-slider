@@ -101,12 +101,9 @@ L.Control.TimeLineSlider = L.Control.extend({
         L.DomEvent.on(this.rangeInput, "input", function() {
             
             value = this.value;
-            // console.log(value);
 
             that.sheet.textContent += that.getTrackStyle(this, that.sliderLength);
             var curLabel = that.rangeLabelArray[value-1].innerHTML;
-            // console.log("Current value passed in is " + value);
-            // console.log("Current label passed in is " + curLabel);
             
             // Change map according to either current label or value chosen
             if (that.options.valChoice === 'label') {
@@ -140,7 +137,7 @@ L.Control.TimeLineSlider = L.Control.extend({
             var inputEvent = new Event('input');
             this.rangeInput.dispatchEvent(inputEvent);
         }
-        //console.log(this.sheet);
+
         return this.container;
 
     },
@@ -320,7 +317,6 @@ L.Control.TimeLineSlider = L.Control.extend({
           style += '.range input::-' + prefs[i] + `{background: linear-gradient(to right, ${that.coverBackgroundRGBA} 0%, ${that.coverBackgroundRGBA} ${coverVal}%, ${that.options.activeColor} 0%, ${that.options.activeColor} ${val}%, ${that.options.inactiveColor} ${val}%, ${that.options.inactiveColor} ${100-coverVal}%, ${that.coverBackgroundRGBA} ${100-coverVal}%, ${that.coverBackgroundRGBA} 100%)}`;
         }
 
-        //console.log(style);
         return style;
     }
       
