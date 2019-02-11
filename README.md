@@ -26,6 +26,8 @@ After loading leaflet css, leaflet js and jQuery in your HTML, include the downl
     <script src="leaflet-timeline-slider.min.js"></script>
 ```
 
+Outside of controlling the aesthetics of the timeline, the main functionality of the timeline in relation to your map comes in the `changeMap` and `extraChangeMapParams` options. The `changeMap` function is your customizable function which is triggered everytime the timeline is changed. Your changeMap function can acess the timeline range value and/or label of the current selection through *value* and *label* parameters that get passed to the function on any change. `extraChagneMapParams` is an object that allows you to include any other parameters your function uses during its execution.
+
 ### Demos
 https://svitkin.github.io/leaflet-timeline-slider/
 
@@ -33,7 +35,7 @@ https://svitkin.github.io/leaflet-timeline-slider/
 ```
 L.control.timelineSlider({
                 timelineItems: ["Day 1", "The Next Day", "Amazing Event", "1776", "12/22/63", "1984"],
-                valChoice: "both", 
+                extraChangeMapParams: {greeting: "Hello World!"}, 
                 changeMap: changeMapFunction })
             .addTo(mymap);
 ```
@@ -45,8 +47,8 @@ Options get passed to the timeline slider function in an options object. See tab
 | ----- | ----------- | ----------- |
 | position      | Corner of map timeline will go | "bottomright" |
 | timelineItems   | Array of names that will be used as timeline events | ["Today", "Tomorrow", "The Next Day"] |
-| valChoice   | TODO        | "label" |
-| changeMap   | Function that will execute when element of timeline is chosen  | `function(val, map) { console.log("You are not using the value or label from the timeline to change the map."); }` |
+| extraChangeMapParams | Object with user defined values or variables that the changeMap function uses. | {} |
+| changeMap   | Function that will execute when element of timeline is chosen. Function can access timeline value (1 through length of timeline), timeline label, or map through value, label, and map keywords. Function can also access extra user defined parameters through extraChangeMapParams.  | `function({label, value, map}) { console.log("You are not using the value or label from the timeline to change the map."); }` |
 | initializeChange   | Boolean indicating whether you want changeMap function to run when timeline is first loaded  | true |
 | thumbHeight   | Height in pixels of moving thumb | "4.5px" |
 | labelWidth   | Width in pixels between labels on timeline | "80px" |

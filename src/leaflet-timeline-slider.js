@@ -5,10 +5,10 @@ L.Control.TimeLineSlider = L.Control.extend({
         position: 'bottomright',
         timelineItems: ["Today", "Tomorrow", "The Next Day"],
 
-        valChoice: 'label',
-        changeMap: function(val, map) {
+        changeMap: function({label, value, map}) {
             console.log("You are not using the value or label from the timeline to change the map.");
         },
+        extraChangeMapParams: {},
         initializeChange: true,
         
         thumbHeight: "4.5px",
@@ -29,16 +29,11 @@ L.Control.TimeLineSlider = L.Control.extend({
 
     },
 
-    // TODO: Initialize checking of function changeMap and valChoice
     initialize: function (options) {
         if (typeof options.changeMap != "function") {
-            options.changeMap = function (val, map) {
+            options.changeMap = function ({label, value, map}) {
                 console.log("You are not using the value or label from the timeline to change the map.");
             };
-        }
-        
-        if (options.valChoice != 'label' & options.valChoice != 'value' & options.valChoice != 'both') {
-            options.valChoice = 'label';
         }
         
         if (parseFloat(options.thumbHeight) <= 2) {
@@ -100,23 +95,15 @@ L.Control.TimeLineSlider = L.Control.extend({
         /* When input gets changed change styles on slider and trigger user's changeMap function */
         L.DomEvent.on(this.rangeInput, "input", function() {
             
-            value = this.value;
+            curValue = this.value;
 
             that.sheet.textContent += that.getTrackStyle(this, that.sliderLength);
-            var curLabel = that.rangeLabelArray[value-1].innerHTML;
+            var curLabel = that.rangeLabelArray[curValue-1].innerHTML;
             
             // Change map according to either current label or value chosen
-            if (that.options.valChoice === 'label') {
-                changeVal = curLabel;
-                that.options.changeMap(changeVal, that.map);
-            } else if (that.options.valChoice === 'value') {
-                changeVal = value;
-                that.options.changeMap(changeVal, that.map);
-            } else if (that.options.valChoice === 'both') {
-                that.options.changeMap(label = curLabel, value = value, map = that.map);
-            }
-
-            
+            mapParams = {value: curValue, label: curLabel, map: map}
+            allChangeMapParameters = {...mapParams, ...that.options.extraChangeMapParams};
+            that.options.changeMap(allChangeMapParameters);
         });
 
         // Add click event to each label so it triggers input change for corresponding value
@@ -148,6 +135,7 @@ L.Control.TimeLineSlider = L.Control.extend({
     },
     
     hexToRGBA: function(hex, opacity){
+        // from https://stackoverflow.com/questions/21646738/convert-hex-to-rgba
         var c;
         if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
             c= hex.substring(1).split('');

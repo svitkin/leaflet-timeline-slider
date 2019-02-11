@@ -15,7 +15,7 @@
     integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
     crossorigin=""></script>
 
-    <script src="dist/leaflet-timeline-slider.min.js"></script>
+    <script src="src/leaflet-timeline-slider.js"></script>
     
 </head>
     <body>
@@ -142,7 +142,7 @@
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(mymap);
             
-            getDataAddMarkers = function(label, value, map) {
+            getDataAddMarkers = function( {label, value, map, exclamation} ) {
                 map.eachLayer(function (layer) {
                         if (layer instanceof L.Marker) {
                             map.removeLayer(layer);
@@ -169,8 +169,7 @@
             };
 
             L.control.timelineSlider({
-                timelineItems: ["Day 1", "The Next Day", "Amazing Event", "1776", "12/22/63", "1984"],
-                valChoice: "both", 
+                timelineItems: ["Day 1", "The Next Day", "Amazing Event", "1776", "12/22/63", "1984"], 
                 changeMap: getDataAddMarkers })
             .addTo(mymap);             
         </script>
