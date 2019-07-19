@@ -153,10 +153,10 @@
                     return i.properties.title===label;
                     });
 
-                var markerArray = []
+                var markerArray = [];
                 L.geoJson(filteredData, {
                     onEachFeature: function onEachFeature(feature, layer) {
-                        content = `${feature.properties.content} <br> (${Math.round(value/6 * 100)}% done with story)`
+                        content = `${exclamation} <br> ${feature.properties.content} <br> (${Math.round(value/6 * 100)}% done with story)`
                         var popup = L.popup().setContent(content);
                         layer.bindPopup(popup);
                         markerArray.push(layer);
@@ -165,12 +165,12 @@
                 
                 var markerGroup = L.featureGroup(markerArray);
                 map.fitBounds(markerGroup.getBounds()).setZoom(12);
-                //markerGroup.addTo(map);
             };
 
             L.control.timelineSlider({
                 timelineItems: ["Day 1", "The Next Day", "Amazing Event", "1776", "12/22/63", "1984"], 
-                changeMap: getDataAddMarkers })
+                changeMap: getDataAddMarkers,
+                extraChangeMapParams: {exclamation: "Hello World!"} })
             .addTo(mymap);             
         </script>
     </body>
