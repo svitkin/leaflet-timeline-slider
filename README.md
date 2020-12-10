@@ -5,8 +5,8 @@ Original implementation of timeline at https://codepen.io/trevanhetzel/pen/rOVrG
 ### Requirements 
 - Leafelt 1.4.0
 - jQuery 3.3.1
-- Tested with Mozilla Firefox and Google Chrome
-- Compatible with Mozilla Firefox and Google Chrome
+- Tested with Mozilla Firefox, Google Chrome, and Edge Chromium
+- Compatible with Mozilla Firefox, Google Chrome, and Edge Chromium
 
 ### Instructions for Use
 After loading leaflet css, leaflet js and jQuery in your HTML, include the downloaded js file from this repository:
